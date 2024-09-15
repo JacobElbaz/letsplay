@@ -1,29 +1,47 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { PlaygroundsService } from './playgrounds.service';
+import { CreatePlaygroundDto } from './dto/create-playground.dto';
+import { UpdatePlaygroundDto } from './dto/update-playground.dto';
 
 @Controller('playgrounds')
 export class PlaygroundsController {
-    @Get()
-    findALl() {
-        return 'This action returns all playgrounds';
-    }
+  constructor(private readonly playgroundsService: PlaygroundsService) {}
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return `This action returns #${id} playground`;
-    }
+  @Get()
+  findALl(@Query() paginationQuery) {
+    // const { limit, offset } = paginationQuery;
+    return this.playgroundsService.findAll();
+  }
 
-    @Post()
-    create(@Body() body) {
-        return body;
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.playgroundsService.findOne(id);
+  }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() body) {
-        return `This action updates #${id} playground`;
-    }
+  @Post()
+  create(@Body() createPlaygroundDto: CreatePlaygroundDto) {
+    return this.playgroundsService.create(createPlaygroundDto);
+  }
 
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return `This action removes #${id} playground`;
-    }
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updatePlaygroundDto: UpdatePlaygroundDto,
+  ) {
+    return this.playgroundsService.update(id, updatePlaygroundDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.playgroundsService.remove(id);
+  }
 }
