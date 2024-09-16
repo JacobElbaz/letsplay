@@ -1,16 +1,34 @@
-import { User } from './users.entity';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-export class Playground {
-  id: number;
+@Schema()
+export class Playground extends Document {
+  @Prop()
   name: string;
+
+  @Prop()
   location: string;
-  description: string;
-  players: User[];
-  availablePlaces: number;
+
+  @Prop()
+  numberOfPlayers: number;
+
+  @Prop([String])
+  players: string[];
+
+  @Prop()
   playgroundType: string;
-  createdAt: Date;
-  createdBy: User;
-  date: Date;
+
+  @Prop()
+  createdBy: string;
+
+  @Prop()
+  date: string;
+
+  @Prop()
   startTime: string;
-  endTime: string;
+
+  @Prop()
+  duration: number;
 }
+
+export const PlaygroundSchema = SchemaFactory.createForClass(Playground);

@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { PlaygroundsModule } from './playgrounds/playgrounds.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './users/entities/users.entity';
+import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [
     PlaygroundsModule,
@@ -15,9 +17,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'postgres',
       password: 'pass123',
       database: 'postgres',
-      autoLoadEntities: true,
+      entities: [User],
       synchronize: true,
     }),
+    MongooseModule.forRoot('mongodb://localhost:27017/nest-course'),
   ],
   controllers: [AppController],
   providers: [AppService],

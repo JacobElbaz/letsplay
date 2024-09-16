@@ -1,69 +1,55 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Playground } from './entities/playgrounds.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { CreatePlaygroundDto } from './dto/create-playground.dto';
+import { UpdatePlaygroundDto } from './dto/update-playground.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto/pagination-query.dto';
 
 @Injectable()
 export class PlaygroundsService {
-  private readonly playgrounds: Playground[] = [
-    {
-      id: 1,
-      name: 'Playground 1',
-      description: 'This is playground 1',
-      location: 'Location 1',
-      players: [],
-      availablePlaces: 10,
-      playgroundType: 'Type 1',
-      createdAt: new Date(),
-      createdBy: null,
-      date: new Date(),
-      startTime: '10:00',
-      endTime: '12:00',
-    },
-    {
-      id: 2,
-      name: 'Playground 2',
-      description: 'This is playground 2',
-      location: 'Location 2',
-      players: [],
-      availablePlaces: 10,
-      playgroundType: 'Type 2',
-      createdAt: new Date(),
-      createdBy: null,
-      date: new Date(),
-      startTime: '14:00',
-      endTime: '16:00',
-    },
-  ];
+  constructor(
+    @InjectModel(Playground.name)
+    private readonly playgroundModel: Model<Playground>,
+  ) {}
 
-  findAll(): Playground[] {
-    return this.playgrounds;
+  findAll(paginationQuery: PaginationQueryDto) {
+    const { limit, offset } = paginationQuery;
+    return this.playgroundModel.find().skip(offset).limit(limit).exec();
   }
 
-  findOne(id: string): Playground {
-    const playground = this.playgrounds.find(
-      (playground) => playground.id === +id,
-    );
+  async findOne(id: string) {
+    const playground = await this.playgroundModel.findOne({ _id: id }).exec();
     if (!playground) {
-      throw new NotFoundException(`Playground with id ${id} not found`);
+      throw new NotFoundException(`Coffee #${id} not found`);
     }
     return playground;
   }
 
-  create(createPlaygroundDto: any) {
-    this.playgrounds.push(createPlaygroundDto);
-    return createPlaygroundDto;
+  create(createPlaygroundDto: CreatePlaygroundDto) {
+    const playground = new this.playgroundModel(createPlaygroundDto);
+    return playground.save();
   }
 
-  update(id: string, updatePlaygroundDto: any) {
-    const index = this.playgrounds.findIndex(
-      (playground) => playground.id === +id,
-    );
-    this.playgrounds[index] = updatePlaygroundDto;
+  async update(id: string, updatePlaygroundDto: UpdatePlaygroundDto) {
+    const existingPlayground = await this.playgroundModel
+      .findOneAndUpdate(
+        { _id: id },
+        { $set: updatePlaygroundDto },
+        { new: true },
+      )
+      .exec();
+    if (!existingPlayground) {
+      throw new NotFoundException(`Playground with id ${id} not found`);
+    }
+    return existingPlayground;
   }
 
-  remove(id: string) {
-    const index = this.playgrounds.findIndex(
-      (playground) => playground.id === +id,
-    );
-    this.playgrounds.splice(index, 1);
+  async remove(id: string) {
+    const playground = await this.playgroundModel.findOneAndDelete({ _id: id });
+    if (!playground) {
+      throw new NotFoundException(`Playground with id ${id} not found`);
+    }
+    return playground;
   }
 }

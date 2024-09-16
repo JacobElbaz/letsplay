@@ -11,15 +11,15 @@ import {
 import { PlaygroundsService } from './playgrounds.service';
 import { CreatePlaygroundDto } from './dto/create-playground.dto';
 import { UpdatePlaygroundDto } from './dto/update-playground.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto/pagination-query.dto';
 
 @Controller('playgrounds')
 export class PlaygroundsController {
   constructor(private readonly playgroundsService: PlaygroundsService) {}
 
   @Get()
-  findALl(@Query() paginationQuery) {
-    // const { limit, offset } = paginationQuery;
-    return this.playgroundsService.findAll();
+  findALl(@Query() paginationQuery: PaginationQueryDto) {
+    return this.playgroundsService.findAll(paginationQuery);
   }
 
   @Get(':id')
