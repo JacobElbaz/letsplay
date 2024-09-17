@@ -29,6 +29,9 @@ export class Playground extends Document {
 
   @Prop()
   duration: number;
+
+  @Prop([{ text: String, createdBy: String, createdAt: Date }])
+  comments: [{ text: string; createdBy: string; createdAt: Date }];
 }
 
 export const PlaygroundSchema = SchemaFactory.createForClass(Playground);

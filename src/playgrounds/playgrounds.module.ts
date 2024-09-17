@@ -15,5 +15,6 @@ import { Playground, PlaygroundSchema } from './entities/playgrounds.entity';
   ],
   controllers: [PlaygroundsController],
   providers: [PlaygroundsService],
+  exports: [PlaygroundsService],
 })
 export class PlaygroundsModule {}
