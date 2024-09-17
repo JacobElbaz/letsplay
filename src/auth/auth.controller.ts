@@ -1,8 +1,12 @@
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard'; // Garde d'authentification locale
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { LoginRequestDto } from './dto/login-request.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -16,7 +20,9 @@ export class AuthController {
   // Connexion
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Req() req: any) {
-    return this.authService.login(req.user);
+  // On définit la réponse de la route etant un objet { access_token: string }
+  @ApiCreatedResponse({ type: LoginResponseDto })
+  async login(@Body() loginDto: LoginRequestDto) {
+    return this.authService.login(loginDto);
   }
 }
