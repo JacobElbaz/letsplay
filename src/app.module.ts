@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/users.entity';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     PlaygroundsModule,
@@ -21,6 +22,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       synchronize: true,
     }),
     MongooseModule.forRoot('mongodb://localhost:27017/nest-course'),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -29,6 +29,14 @@ export class UsersService {
     return user;
   }
 
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+    return user;
+  }
+
   create(createUserDto: CreateUserDto) {
     const user = this.userRepository.create(createUserDto);
     return this.userRepository.save(user);
